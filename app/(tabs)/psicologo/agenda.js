@@ -1,47 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, Modal, TextInput, TouchableOpacity, ToastAndroid, Alert, Platform } from 'react-native';
 import { AgendaList, CalendarProvider, WeekCalendar } from 'react-native-calendars';
 import AgendaItem from '@/components/psicologo/agendaItem';
 import { useAppContext } from '@/components/provider';
 import Header from '@/components/geral/header';
-
-const getMarkedDates = (availableDates) => {
-  const markedDates = {};
-  const today = new Date();
-  const todayString = today.toISOString().split('T')[0];
-
-  // Marcar todas as datas como indisponíveis por padrão, começando pelo dia atual
-  for (let i = 0; i < 365; i++) {
-    const date = new Date();
-    date.setDate(today.getDate() + i);
-    const dateString = date.toISOString().split('T')[0];
-    markedDates[dateString] = { disabled: true, disableTouchEvent: true };
-  }
-
-  // Marcar as datas disponíveis conforme a agenda
-  availableDates.forEach(item => {
-    const date = item.data;
-    const agendaId = item.idSessao;
-    const horario = item.hora_inicio;
-    markedDates[date] = {
-      disabled: false,
-      disableTouchEvent: false,
-      dotColor: '#89CC24',
-      marked: true,
-      agendaId: agendaId,
-      horario: horario
-    };
-  });
-
- 
-  return markedDates;
-};
+import { AntDesign } from '@expo/vector-icons';
+import { Button } from "react-native-paper";
 
 const Agenda = () => {
   const { usuarioAtual, AgendaPsicologo } = useAppContext();
   const [markedDates, setMarkedDates] = useState({});
   const [items, setItems] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newAppointment, setNewAppointment] = useState({
+    date: new Date(),
+    time: new Date(),
+    type: '',
+    name: ''
+  });
 
   useEffect(() => {
     if (usuarioAtual) {
@@ -50,106 +27,157 @@ const Agenda = () => {
   }, [usuarioAtual]);
 
   const loadItems = async () => {
-    if (!usuarioAtual) {
-      return;
-    }
+    if (!usuarioAtual) return;
 
     const psicologoId = usuarioAtual.id;
     const agendaData = await AgendaPsicologo(psicologoId);
 
     const items = {};
-    const formatTime = (time) => {
-      return new Date(`1970-01-01T${time}Z`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-    };
-
     agendaData.forEach((entry) => {
       const strTime = entry.data;
       if (!items[strTime]) {
         items[strTime] = [];
       }
-
-      items[strTime].push({
-        entry
-      });
+      items[strTime].push({ entry });
     });
 
     setItems(items);
-
-    const markedDates = getMarkedDates(agendaData);
-    setMarkedDates(markedDates);
-
-    // Set the initial selected date to the first available date
-    const firstAvailableDate = Object.keys(markedDates).find(date => !markedDates[date].disabled) || selectedDate;
-    setSelectedDate(firstAvailableDate);
   };
 
-  const renderCustomHeaderTitle = () => (
-    <Text style={styles.customHeaderTitle}>Custom Header Title</Text>
-  );
+  const handleSaveAppointment = () => {
+    setModalVisible(false);
+
+    if (Platform.OS === 'android') {
+      ToastAndroid.show("Compromisso adicionado com sucesso!", ToastAndroid.SHORT);
+    } else {
+      Alert.alert("Sucesso", "Compromisso adicionado com sucesso!");
+    }
+  };
 
   return (
-    <CalendarProvider
-      date={selectedDate}
-      showTodayButton
-      customHeader={renderCustomHeaderTitle}
-      theme={{
-        backgroundColor: '#fff',
-        selectedDayBackgroundColor: '#477BDE'
-      }}
-    >
-      <Header corFundo={"#F43F5E"} href='psicologo/home'></Header>
+    <CalendarProvider date={selectedDate} showTodayButton>
+      <Header corFundo={'#F37187'} href='psicologo/home' />
       <WeekCalendar
-        customHeaderTitle={renderCustomHeaderTitle}
         markedDates={markedDates}
-        hideKnob
         firstDay={1}
-        theme={{
-          textDayFontFamily: 'Poppins-Light',
-          textDayFontSize: 14,
-          textMonthFontFamily: 'Poppins-Medium',
-          textDayHeaderFontFamily: 'Poppins-Light',
-          backgroundColor: '#fff',
-          textMonthFontSize: 15,
-          selectedDayBackgroundColor: '#F43F5E'
-        }}
-        style={styles.sombra}
-        onDayPress={(day) => {
-          setSelectedDate(day.dateString);
-        }}
+        onDayPress={(day) => setSelectedDate(day.dateString)}
       />
       <AgendaList
         sections={Object.keys(items).map(key => ({ title: key, data: items[key] }))}
         renderItem={({ item }) => <AgendaItem item={item} />}
-        sectionStyle={styles.section}
       />
+
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.floatingButton}>
+        <AntDesign name="plus" size={24} color="white" />
+      </TouchableOpacity>
+
+      <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Novo Compromisso</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Tipo de Compromisso"
+              value={newAppointment.type}
+              onChangeText={(text) => setNewAppointment(prev => ({ ...prev, type: text }))}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Nome do Compromisso"
+              value={newAppointment.name}
+              onChangeText={(text) => setNewAppointment(prev => ({ ...prev, name: text }))}
+            />
+            <View style={{ marginBottom: 10, flexDirection: 'row', gap: 10 }}>
+              <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                <Text style={styles.label}>Data:</Text>
+                <Text style={styles.date}>12:00</Text>
+              </View>
+              <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+
+                <Text style={styles.label}>Horário:</Text>
+                <Text style={styles.date}>13/02/2025</Text>
+              </View>
+            </View>
+
+
+            <View style={{ flexDirection: 'row', gap: 5, margin: 5 }}>
+              <Button contentStyle={[styles.botao, { backgroundColor: '#8dcc28' }]} labelStyle={{ fontFamily: 'Poppins-Regular', color: 'white' }} onPress={handleSaveAppointment}>Salvar</Button>
+              <Button contentStyle={[styles.botao, { backgroundColor: '#F43F5E' }]} labelStyle={{ fontFamily: 'Poppins-Regular', color: 'white' }} onPress={() => setModalVisible(false)}>Cancelar</Button>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </CalendarProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  section: {
-    color: 'grey',
-    textTransform: 'capitalize',
-    fontFamily: 'Poppins-Light',
-    borderColor: '#e3e1e1',
-    borderBottomWidth: 1,
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
-  customHeaderTitle: {
-    fontFamily: 'Poppins-Medium',
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center'
+  },
+  modalTitle: {
     fontSize: 18,
-    color: '#477BDE',
+    fontWeight: 'bold',
+    marginBottom: 15,
+    fontFamily: 'Poppins-Light'
   },
-  sombra: {
-    borderBottomLeftRadius: 7,
-    borderBottomRightRadius: 7,
-    // Sombra para iOS
-    shadowColor: 'grey',
+  input: {
+    borderWidth: 1,
+    borderColor: '#F37187',
+    padding: 10,
+    width: '100%',
+    marginVertical: 10,
+    borderRadius: 5,
+    fontFamily: 'Poppins-Light'
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#F37187',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // Sombra para Android
-    elevation: 5,
-  }
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 5
+  },
+  botao: {
+    borderRadius: 5
+  },
+  date: {
+    backgroundColor: "#E8E8E8",
+    padding: 5,
+    borderRadius: 5,
+    fontFamily: 'Poppins-Light',
+
+  },
+  botao: {
+    borderRadius: 5,
+    fontFamily: 'Poppins-Light',
+
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginTop: 10,
+    fontFamily: 'Poppins-Light',
+
+  },
 });
 
 export default Agenda;

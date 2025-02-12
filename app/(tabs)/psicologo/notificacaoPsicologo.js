@@ -57,7 +57,7 @@ export default function NotificacaoPaciente() {
 
   return (
     <>
-      <Header corFundo="#F43F5E" href='psicologo/home' />
+      <Header corFundo="#F37187" href='psicologo/home' />
       <ScrollView contentContainerStyle={styles.scrollView}>
         
         <Text style={[styles.sectionHeader, styles.boldText]}>NÃO LIDAS</Text>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 18,
-    color: '#F43F5E',
+    color: '#F37187',
     fontFamily: 'Poppins-Bold',
     marginBottom: 10,
     textAlign: 'center',

@@ -91,7 +91,7 @@ export default function HomePsicologo() {
                     <View style={[styles.rowCapa]}>
                         <Link href={"psicologo/notificacaoPsicologo"}>
                             <View style={styles.notificacao}>
-                            <Badge style={{ color: 'white', fontSize: 18, fontFamily: 'Poppins-Light' }}>2</Badge>
+                            <Badge style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Light', backgroundColor:'#477bde' }}>2</Badge>
                                 <Ionicons name="notifications-outline"
                                     size={25}
                                     color={'white'} />
