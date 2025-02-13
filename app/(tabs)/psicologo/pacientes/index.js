@@ -20,7 +20,7 @@ export default function ListaPacientes() {
                     pacientes.map(paciente => (
                         <Link key={paciente.id} href={`psicologo/pacientes/${paciente.id}`} asChild>
                             <TouchableOpacity style={styles.cardContainer}>
-                                <CardHomePsi paciente={paciente} />
+                                <CardHomePsi paciente={paciente}/>
                             </TouchableOpacity>
                         </Link>
                     ))

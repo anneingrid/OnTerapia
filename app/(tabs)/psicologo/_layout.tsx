@@ -90,13 +90,31 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="sessao/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="[sessao]/index"
         options={{
           href: null,
         }}
       />
       <Tabs.Screen
+        name="sessao/chat"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="[sessao]/chat"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="sessao/meetPsicologo"
         options={{
           href: null,
         }}

@@ -27,11 +27,11 @@ export default function CardHome({ psicologo, status, index }) {
                         <View style={styles.descricao}>
                             <View style={styles.estrelas}>{renderStars(psicologo.quantEstrelas)}</View>
                             <View style={styles.tag}>
-                                {psicologo.tags.map((tag, index) => (
+                                {/* {psicologo.tags.map((tag, index) => (
                                     <Badge key={index} style={{ backgroundColor: cores[index % cores.length], marginHorizontal: 2, minWidth: 60 }}>
                                         {tag}
                                     </Badge>
-                                ))}
+                                ))} */}
                             </View>
                         </View>
                     </View>

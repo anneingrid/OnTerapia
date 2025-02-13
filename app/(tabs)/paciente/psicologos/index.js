@@ -1,81 +1,52 @@
-import { React, useEffect, useState } from 'react';
-import CardHome from '@/components/paciente/cardHome';
-import Busca from '@/components/buscar/busca';
-import Filtro from '@/components/buscar/filtro';
+import React from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Link } from 'expo-router';
+import { Card, Text, Badge } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 import BarraTopo from '@/components/buscar/barraTopo';
 import Header from '@/components/geral/header';
-import { useAppContext } from '@/components/provider';
-import { Link } from 'expo-router';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
 
-import ProgressBar from './[id]/barraProgresso';
+const psicologos = [
+    { id: 1, nome: 'Dra. Ana Silva', especialidade: 'TCC', status: 'Disponível', quantEstrelas: 4 },
+    { id: 2, nome: 'Dr. João Souza', especialidade: 'Psicanálise', status: 'Indisponível', quantEstrelas: 3 },
+    { id: 3, nome: 'Dra. Mariana Lima', especialidade: 'Gestalt-terapia', status: 'Disponível', quantEstrelas: 5 },
+];
+
+const renderStars = (quantidade) => {
+    return Array.from({ length: quantidade }, (_, index) => (
+        <Ionicons key={index} name="star" size={16} color="gold" />
+    ));
+};
 
 export default function ListaPsicologos() {
-    const { psicologos, filtroAtivoBarra, filtroAtivoBusca, psicologosBuscados, filtroAtivo, psicologosFiltrados, statusAgenda } = useAppContext();
-    const [listaStatus, setListaStatus] = useState([]); 
-    const [currentPage, setCurrentPage] = useState(0);
-    const [status, setStatus] = useState([]);
-
-    useEffect(() => {
-
-        const status = async () => {
-            const newStatusList = [];
-            for (var psicologo of psicologos) {
-                const respostas = await statusAgenda(psicologo.id);
-                var contador = 0
-                for (var resposta of respostas) {
-                    if (resposta.disponivel == true) {
-                        newStatusList.push('Disponível');
-                        break
-                    }
-                    contador++
-                }
-                if (contador == respostas.length) {
-                    newStatusList.push('Indisponível');
-                }
-            }
-            setStatus(newStatusList);
-        };
-        status();
-    }, []);
-
     return (
         <ScrollView>
-
-            <Header corFundo="#477BDE" href='paciente/home'></Header>
-            <View style={styles.container} >
-
+            <Header corFundo="#477BDE" href='paciente/home' />
+            <View style={styles.container}>
                 <BarraTopo />
-                {filtroAtivoBarra && <Busca />}
-                {filtroAtivo && <Filtro />}
-                {!filtroAtivoBusca && !filtroAtivo &&
-                    psicologos.map((psicologo, index) => (
-                        <Link key={psicologo.id}
-                            href={`paciente/psicologos/${psicologo.id}`} >
-                            <CardHome psicologo={psicologo} status={status} key={psicologo.id} index={index}/>
-                        </Link>
-                    ))
-                }
-                {filtroAtivoBusca &&
-                    psicologosBuscados.map((psicologo, index) => (
-                        <Link key={psicologo.id}
-                            href={`paciente/psicologos/${psicologo.id}`} >
-                            <CardHome psicologo={psicologo} status={status} key={psicologo.id} index={index}/>
-                        </Link>
-                    ))
-                }
-                {filtroAtivo &&
-                    psicologosFiltrados.map((psicologo, index) => (
-                        <Link key={psicologo.id}
-                            href={`paciente/psicologos/${psicologo.id}`} >
-                            <CardHome psicologo={psicologo} status={status} key={psicologo.id} index={index} />
-
-                        </Link>
-                    ))
-                }
+                {psicologos.map((psicologo, index) => (
+                    <Link key={psicologo.id} href={`paciente/psicologos/${psicologo.id}`}>
+                        <Card style={styles.card}>
+                            <Card.Content>
+                                <View style={styles.cardContent}>
+                                    <Ionicons style={styles.icon} name="person-outline" size={25} color={'black'} />
+                                    <View style={styles.textContainer}>
+                                        <View style={styles.titulo}>
+                                            <Text style={styles.nome}>{psicologo.nome}</Text>
+                                            <Badge style={psicologo.status === 'Disponível' ? styles.disponivel : styles.indisponivel}>
+                                                {psicologo.status}
+                                            </Badge>
+                                        </View>
+                                        <Text style={styles.especialidade} numberOfLines={3}>{psicologo.especialidade}</Text>
+                                        <View style={styles.estrelas}>{renderStars(psicologo.quantEstrelas)}</View>
+                                    </View>
+                                </View>
+                            </Card.Content>
+                        </Card>
+                    </Link>
+                ))}
             </View>
         </ScrollView>
-
     );
 };
 
@@ -83,5 +54,47 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
+    },
+    card: {
+        marginTop: 10,
+        backgroundColor: 'white',
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    icon: {
+        marginRight: 15,
+    },
+    textContainer: {
+        flex: 1,
+    },
+    nome: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 3,
+    },
+    especialidade: {
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    titulo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    disponivel: {
+        backgroundColor: 'green',
+        color: 'white',
+        paddingHorizontal: 10,
+    },
+    indisponivel: {
+        backgroundColor: 'red',
+        color: 'white',
+        paddingHorizontal: 10,
+    },
+    estrelas: {
+        flexDirection: 'row',
+        marginTop: 5,
     },
 });

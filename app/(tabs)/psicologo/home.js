@@ -236,7 +236,7 @@ export default function HomePsicologo() {
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
                 <Ionicons name="person-outline" size={20} color={'#F37187'} 
                     style={{ backgroundColor: 'white', borderRadius: 5, padding: 1 }} />
-                <Text style={styles.textoCardSessao} numberOfLines={1}>Paciente</Text>
+                <Text style={styles.textoCardSessao} numberOfLines={1}>Jonathan Calleri</Text>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
                 <Ionicons name="calendar-outline" size={20} color={'#F37187'} 

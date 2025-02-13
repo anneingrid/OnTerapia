@@ -17,7 +17,7 @@ import { router } from "expo-router";
 
 export default function Login() {
   const { buscaLogin } = useAppContext();
-  const [email, setEmail] = useState("psi");
+  const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("1234");
   const [carregando, setCarregando] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +56,6 @@ export default function Login() {
                 style={styles.icon}
               />
               <TextInput
-                value={'psi'}
                 onChangeText={setEmail}
                 style={styles.input}
                 placeholderTextColor="#e63946"
