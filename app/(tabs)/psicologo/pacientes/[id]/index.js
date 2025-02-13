@@ -1,26 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { Card } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Card, Button } from 'react-native-paper';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { useLocalSearchParams } from "expo-router";
 import { useAppContext } from '@/components/provider';
+import Header from '@/components/geral/header';
 import { Link } from 'expo-router';
-import { AntDesign } from '@expo/vector-icons';
 
 const BarraProgresso = ({ totalSessoes, sessoesConcluidas }) => {
-    const barras = [];
-    for (let i = 0; i < totalSessoes; i++) {
-        barras.push(
-            <View
-                key={i}
-                style={[
-                    styles.barra,
-                    { backgroundColor: i < sessoesConcluidas ? '#7fc517' : '#f0f0f0' },
-                ]}
-            />
-        );
-    }
-    return <View style={styles.containerBarra}>{barras}</View>;
+    return (
+        <View style={styles.containerBarra}>
+            {[...Array(totalSessoes)].map((_, i) => (
+                <View
+                    key={i}
+                    style={[
+                        styles.barra,
+                        { backgroundColor: i < sessoesConcluidas ? '#7fc517' : '#E0E0E0' },
+                    ]}
+                />
+            ))}
+        </View>
+    );
+};
+
+const sessions = [
+    { id: 1, date: "13/02/2025", time: "10:00", completed: false },
+    { id: 2, date: "12/02/2025", time: "14:30", completed: false },
+    { id: 3, date: "11/02/2025", time: "16:15", completed: true },
+    { id: 4, date: "10/02/2025", time: "09:45", completed: true },
+];
+
+const SessionCard = ({ date, time, completed }) => {
+    return (
+        <View style={styles.sessionCard}>
+            <View>
+            <Text style={styles.sessionDate}>{date} - {time} </Text>
+            </View>
+            <Text style={[styles.sessionStatus, { backgroundColor: completed ? '#7fc517' : '#F43F5E' }]}> 
+                {completed ? "Concluída" : "Pendente"}
+            </Text>
+        </View>
+    );
+};
+
+const SessionList = () => {
+    return (
+        <View style={styles.sessionWrapper}>
+            <Text style={styles.sessionTitle}>Sessões</Text>
+            <Card style={styles.sessionContainer}>
+                {sessions.map((session) => (
+                    <SessionCard key={session.id} date={session.date} time={session.time} completed={session.completed} />
+                ))}
+            </Card>
+        </View>
+    );
 };
 
 export default function PacienteDetalhes() {
@@ -28,7 +61,6 @@ export default function PacienteDetalhes() {
     const { pacientes, sessoes_por_paciente } = useAppContext();
     const [sessoes, setSessoes] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [proximaSessao, setProximaSessao] = useState(null);
     const paciente = pacientes.find(p => p.id === parseInt(id));
 
     useEffect(() => {
@@ -37,21 +69,11 @@ export default function PacienteDetalhes() {
                 const sessoes = await sessoes_por_paciente(id);
                 setSessoes(sessoes);
                 setLoading(false);
-
-                const sessoesOrdenadasPorData = sessoes.sort((a, b) => new Date(a.dataSessao) - new Date(b.dataSessao));
-                const proximaSessaoEncontrada = sessoesOrdenadasPorData.find(sessao => new Date(sessao.dataSessao) > new Date());
-
-                if (proximaSessaoEncontrada) {
-                    setProximaSessao(proximaSessaoEncontrada.dataSessao);
-                } else {
-                    setProximaSessao(null);
-                }
             } catch (error) {
                 console.error('Erro ao buscar sessões:', error.message);
                 setLoading(false);
             }
         };
-
         buscaDados();
     }, [id]);
 
@@ -63,231 +85,200 @@ export default function PacienteDetalhes() {
         );
     }
 
-    const primeiraSessao = sessoes[0] || {};
-    const formatarDataBR = (data) => {
-        if (!data) return 'Sem agendamento futuro';
-        const date = new Date(data);
-        return date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-    };
-
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.voltar}>
-                    <Link href={`psicologo/pacientes`}>
-                        <AntDesign name="leftcircleo" size={24} color="white" />
-                    </Link>
-                </View>
-                <Image source={{ uri: paciente.imageUrl }} style={styles.imagemPerfil} />
-                <Text style={styles.nomePaciente}>{paciente.nome}</Text>
-                <Text style={styles.descricaoPaciente}>{paciente.idade} anos </Text>
-            </View>
-            <View style={styles.detalhesContainer}>
-                <View style={styles.anotacoes}>
-                    <Text style={styles.anotacoesTitulo}>
-                        <Link href={`/psicologo/anotacoes/${paciente.id}`}>
-
-                            <View style={styles.iconContainerGreen}>
-                                <Ionicons name="create" size={25} color="#7fc517" />
-                            </View> Detalhes
-                        </Link>
-                    </Text>
-                    <Text style={styles.anotacoesTexto}>{primeiraSessao.notasDeSessao}</Text>
-                </View>
-                <View style={styles.quantidadeSessoesContainer}>
-                    <Text style={styles.quantidadeSessoesTitulo}>Quantidade de Sessões</Text>
-                    <BarraProgresso totalSessoes={4} sessoesConcluidas={sessoes.length} />
-                    <Text style={styles.quantidadeSessoesTexto}>{sessoes.length} de 4</Text>
-                </View>
-                <Card style={styles.cardProximaSessao}>
-                    <Card.Content style={styles.cardContent}>
-                        <View style={styles.calendarIconContainer}>
-                            <View style={styles.iconContainerRed}>
-                                <Ionicons name="calendar" size={24} color="#F43F5E" />
-                            </View>
+            <Header corFundo={'#ED7A8B'} href='psicologo/index' style={styles.header}/>
+            <Card style={styles.profileCard}>
+                <View style={styles.profileContent}>
+                    <Image source={{ uri: "https://cdn-icons-png.flaticon.com/512/4140/4140047.png" }} style={styles.imagemPerfil} />
+                    <View style={styles.textContainer}>
+                        <Text style={styles.nomePaciente}>{paciente.nome}</Text>
+                        <Text style={styles.descricaoPaciente}>{paciente.idade} anos</Text>
                         </View>
-                        <View style={styles.horarioTextContainer}>
-                            <Text style={styles.tituloHorario}>Próxima Sessão</Text>
-                            <Text style={styles.anotacoesTexto}>{primeiraSessao.proximaSessao}</Text>
-                        </View>
-                    </Card.Content>
-                </Card>
-            </View>
+                </View>
+            </Card>
+            <Card style={styles.iconeCard}>
+                <View style={styles.iconeContainer}>
+                    <View style={styles.iconeItem}>
+                        <TouchableOpacity style={styles.iconeCirculoBorda}>
+                            <Ionicons name="document-text" size={24} color="#F43F5E" />
+                        </TouchableOpacity>
+                        <Text style={styles.iconeTexto}>Anotações</Text>
+                    </View>
+                    <View style={styles.iconeItem}>
+                        <TouchableOpacity style={styles.iconeCirculoBorda}>
+                            <Ionicons name="chatbubble" size={24} color="#F43F5E" />
+                        </TouchableOpacity>
+                        <Text style={styles.iconeTexto}>Chat</Text>
+                    </View>
+                    <View style={styles.iconeItem}>
+                        <TouchableOpacity style={styles.iconeCirculoBorda}>
+                            <Ionicons name="information-circle" size={24} color="#F43F5E" />
+                        </TouchableOpacity>
+                        <Text style={styles.iconeTexto}>More info</Text>
+                    </View>
+                </View>
+            </Card>
+            <SessionList />
         </ScrollView>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
+        fontFamily: 'Poppins-Light',
         flexGrow: 1,
         backgroundColor: '#f9f9f9',
         alignItems: 'center',
-        paddingVertical: 20,
-        paddingHorizontal: 10,
-    },
-    voltar: {
-        position: 'absolute',
-        top: 20,
-        left: 10,
-        backgroundColor: "#F43F5E",
-        borderRadius: 20,
-        padding: 5,
+        paddingVertical: 0,
     },
     header: {
+        marginTop: 0,
+        paddingTop: 0,
+    },
+    profileCard: {
+        backgroundColor: '#fff',
+        width: '90%',
+        borderRadius: 15,
+        padding: 20,
+        marginVertical: 15,
+        elevation: 3,
+    },
+    profileContent: {
+        flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#F43F5E',
-        width: '100%',
-        paddingVertical: 30,
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
+    },
+    textContainer: {
+        flexShrink: 1,
     },
     imagemPerfil: {
-        width: 40,
-        height: 40,
-        borderRadius: 50,
-        marginBottom: 10,
+        width: 70,
+        height: 70,
+        borderRadius: 35,
+        marginRight: 15,
+    },
+    sessionDate: {
+        fontSize: 16,
+        color: '#333',
+        fontFamily: 'Poppins-Light',
+    },
+    sessionTime: {
+        fontSize: 16,
+        color: '#333',
+        fontFamily: 'Poppins-Light',
     },
     nomePaciente: {
-        fontSize: 24,
-        color: '#fff',
-        fontFamily: 'Poppins-Medium',
-
+        fontSize: 16,
+        color: '#333',
+        fontFamily: 'Poppins-Light',
     },
     descricaoPaciente: {
-        fontSize: 16,
-        color: '#fff',
-        marginTop: 5,
-
-        fontFamily: 'Poppins-Light',
-
+        fontSize: 14,
+        color: '#666',
     },
-    detalhesContainer: {
+    iconeCard: {
+        backgroundColor: '#fff',
+        width: '90%',
+        borderRadius: 15,
+        padding: 15,
+        marginVertical: 10,
+        elevation: 3,
+        alignItems: 'center',
+        fontFamily: 'Poppins-Light',
+    },
+    iconeContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        width: '100%',
+        fontFamily: 'Poppins-Light',
+    },
+    iconeItem: {
+        alignItems: 'center',
+        padding: 12,
+        fontFamily: 'Poppins-Light',
+    },
+    iconeCirculoBorda: {
+        borderWidth: 2,
+        borderColor: '#ED7A8B',
+        padding: 15,
+        borderRadius: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'Poppins-Light',
+    },
+    iconeTexto: {
+        fontSize: 12,
+        color: '#ED7A8B',
+        textAlign: 'center',
+        marginTop: 5,
+        fontFamily: 'Poppins-Light',
+    },
+    botaoAgendar: {
+        backgroundColor: '#ED7A8B',
         width: '90%',
         marginTop: 20,
-    },
-    anotacoes: {
-        backgroundColor: '#fff',
+        paddingVertical: 10,
         borderRadius: 10,
-        padding: 20,
-        marginBottom: 20,
-        shadowColor: '#666',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
         fontFamily: 'Poppins-Light',
-
     },
-    anotacoesTitulo: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#000',
-        marginBottom: 10,
-
-        fontFamily: 'Poppins-Light',
-
-    }, loadingContainer: {
+    loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-
-    },
-    anotacoesTexto: {
-        fontSize: 16,
-        color: '#666',
-        lineHeight: 22,
         fontFamily: 'Poppins-Light',
-
     },
-    quantidadeSessoesContainer: {
+    sessionWrapper: {
+        width: '90%',
+        alignSelf: 'center',
+    },
+    sessionContainer: {
         backgroundColor: '#fff',
-        borderRadius: 10,
         padding: 20,
-        alignItems: 'center',
-        marginBottom: 20,
-        shadowColor: '#666',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
+        borderRadius: 10,
         elevation: 3,
     },
-    quantidadeSessoesTitulo: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#000',
-        marginBottom: 10,
-        fontFamily: 'Poppins-Light',
-
-    },
-    quantidadeSessoesTexto: {
+    sessionTitle: {
         fontSize: 16,
-        color: '#000',
-        marginTop: 10,
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 15,
         fontFamily: 'Poppins-Light',
-
     },
-    containerBarra: {
+    sessionCard: {
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+        fontFamily: 'Poppins-Light',
     },
-    barra: {
-        width: 20,
-        height: 20,
+    sessionDateTime: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        color: '#333',
+        fontFamily: 'Poppins-Light',
+    },
+    sessionStatus: {
+        paddingVertical: 8,
+        paddingHorizontal: 15,
         borderRadius: 5,
-        marginHorizontal: 2,
-    },
-    cardProximaSessao: {
-        backgroundColor: '#f9f9f9',
-        borderRadius: 10,
-        marginVertical: 20,
-        padding: 15,
-    },
-    cardContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-
-        fontFamily: 'Poppins-Light',
-
-    },
-    calendarIconContainer: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-    },
-    iconContainerGreen: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#a8e6cf',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 5,
-    },
-    iconContainerRed: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#f8b6c2',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-    },
-    horarioTextContainer: {
-        flex: 1,
-    },
-    tituloHorario: {
+        color: 'white',
         fontSize: 16,
+        textAlign: 'center',
+        minWidth: 100,
+        fontFamily: 'Poppins-Light',
+    },
+    completed: {
+        backgroundColor: '#7fc517',
+    },
+    pending: {
+        backgroundColor: '#F43F5E',
+    },
+    textDefault: {
+        fontSize: 16,
+        color: '#333',
         fontWeight: 'bold',
-        color: '#000',
-        marginBottom: 5,
-        fontFamily: 'Poppins-Light'
-    },
-    textoHorario: {
-        fontSize: 14,
-        color: '#000',
-    },
+        fontFamily: 'Poppins-Light',
+    }
 });

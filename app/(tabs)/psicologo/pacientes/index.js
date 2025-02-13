@@ -11,7 +11,7 @@ export default function ListaPacientes() {
 
     return (
         <View style={styles.screenContainer}>
-            <Header corFundo={'#F43F5E'} href='psicologo/home' />
+            <Header corFundo={'#ED7A8B'} href='psicologo/home' />
             <View style={styles.headerContainer}>
                 <Text style={styles.title}>Meus Pacientes</Text>
             </View>
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 22,
-        color: '#F43F5E',
+        color: '#ED7A8B',
         fontFamily: 'Poppins-Bold',
         textTransform: 'uppercase',
     },
