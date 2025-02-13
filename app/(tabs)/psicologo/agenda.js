@@ -78,12 +78,14 @@ const Agenda = () => {
             <TextInput
               style={styles.input}
               placeholder="Tipo de Compromisso"
+              placeholderTextColor={'#e63946'}
               value={newAppointment.type}
               onChangeText={(text) => setNewAppointment(prev => ({ ...prev, type: text }))}
             />
             <TextInput
               style={styles.input}
               placeholder="Nome do Compromisso"
+              placeholderTextColor={'#e63946'}
               value={newAppointment.name}
               onChangeText={(text) => setNewAppointment(prev => ({ ...prev, name: text }))}
             />
@@ -93,16 +95,15 @@ const Agenda = () => {
                 <Text style={styles.date}>12:00</Text>
               </View>
               <View style={{ justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-
                 <Text style={styles.label}>Horário:</Text>
                 <Text style={styles.date}>13/02/2025</Text>
               </View>
             </View>
 
-
-            <View style={{ flexDirection: 'row', gap: 5, margin: 5 }}>
-              <Button contentStyle={[styles.botao, { backgroundColor: '#8dcc28' }]} labelStyle={{ fontFamily: 'Poppins-Regular', color: 'white' }} onPress={handleSaveAppointment}>Salvar</Button>
+            <View style={{ flexDirection: 'row', gap: 20, margin: 5 }}>
               <Button contentStyle={[styles.botao, { backgroundColor: '#F43F5E' }]} labelStyle={{ fontFamily: 'Poppins-Regular', color: 'white' }} onPress={() => setModalVisible(false)}>Cancelar</Button>
+              <Button contentStyle={[styles.botao, { backgroundColor: '#8dcc28' }]} labelStyle={{ fontFamily: 'Poppins-Regular', color: 'white' }} onPress={handleSaveAppointment}>Salvar</Button>
+            
             </View>
           </View>
         </View>
@@ -137,8 +138,10 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
     marginVertical: 10,
-    borderRadius: 5,
-    fontFamily: 'Poppins-Light'
+    borderRadius: 15,
+    fontFamily: 'Poppins-Light',
+    color: 'grey',
+    backgroundColor: '#FFF9F9'
   },
   floatingButton: {
     position: 'absolute',
@@ -164,19 +167,12 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
     fontFamily: 'Poppins-Light',
-
-  },
-  botao: {
-    borderRadius: 5,
-    fontFamily: 'Poppins-Light',
-
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
     fontFamily: 'Poppins-Light',
-
   },
 });
 

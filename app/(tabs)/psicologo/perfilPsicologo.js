@@ -3,6 +3,8 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import perfil from '@/assets/images/perfil.png';
 import logo from '@//assets/images/logoOnTerapia.png';
+import { Link } from 'expo-router';
+import FraseMotivacional from '../../../components/psicologo/frases';
 
 export default function PerfilPsicologo() {
 
@@ -10,15 +12,19 @@ export default function PerfilPsicologo() {
         <ScrollView style={styles.container}>
 
             <View style={styles.header}>
-                <View>
-                    <Image source={logo} style={{
-                        width: 30,
-                        height: 30, margin: 15
-                    }}></Image>
+                <View style={{ marginTop: 15, }}>
+                    <Link href={'/'} style={{
+                        marginTop: 35,
+                        height: 30, margin: 15,
+                    }}>
+                        <Ionicons name="log-out-outline" size={30} color="white" />
+                    </Link>
+
+
                 </View>
-                <View>
+                <View style={{ marginTop: 35, }}>
                     <TouchableOpacity style={styles.settingsButton}>
-                        <Ionicons name="settings-outline" size={24} color="white" />
+                        <Ionicons name="settings-outline" size={30} color="white" />
                     </TouchableOpacity>
                 </View>
 
@@ -35,14 +41,14 @@ export default function PerfilPsicologo() {
 
             {/* Estatísticas */}
             <View style={{
-                backgroundColor: 'white',
-                borderRadius: 20,
+
                 padding: 10,
-                marginHorizontal:10
+                marginHorizontal: 10,
+
             }}>
 
-                <View style={{justifyContent:'center', alignItems:'center'}}>
-                    <Text style={styles.name}>Dr. Psicólogo</Text>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={styles.name}>Dr. Jackson</Text>
                     <Text style={styles.id}>CRP : 12345678</Text>
                 </View>
                 <View style={styles.statsContainer}>
@@ -55,19 +61,21 @@ export default function PerfilPsicologo() {
                         <Text style={styles.statNumber}>68</Text>
                         <Text style={styles.statLabel}>Pacientes</Text>
                     </View>
-                    <View style={styles.statItem}>
+                    {/* <View style={styles.statItem}>
                         <Text style={styles.statNumber}>540</Text>
                         <Text style={styles.statLabel}>Sessões</Text>
-                    </View>
+                    </View> */}
                 </View>
             </View>
 
             {/* Botão de crédito */}
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.creditButton}>
-                    <Text style={styles.buttonText}>Crédito disponível: R$ 200</Text>
-                </TouchableOpacity>
+                <View style={styles.creditButton}>
+                    <Text style={styles.buttonText}>Saldo disponível: <Text style={{fontFamily:'Poppins-Semilbold', fontSize:20}}>R$ 200</Text></Text>
+                </View>
             </View>
+            <FraseMotivacional></FraseMotivacional>
+
         </ScrollView>
     );
 }
@@ -81,10 +89,9 @@ const styles = StyleSheet.create({
     header: {
         position: 'relative',
         backgroundColor: '#F37187',
-        height: 100,
+        height: 150,
         flexDirection: 'row',
         fontFamily: 'Poppins-Light',
-
         borderBottomLeftRadius: 24,
         borderBottomRightRadius: 24,
 
@@ -120,20 +127,31 @@ const styles = StyleSheet.create({
     },
     statsContainer: {
         flexDirection: 'row',
-        justifyContent:'space-between',
-        margin: 20,
+        justifyContent: 'center',
+        // margin: 20,
         fontFamily: 'Poppins-Light',
-
+        gap: 20,
+        marginVertical: 5
     },
     statItem: {
         alignItems: 'center',
         fontFamily: 'Poppins-Light',
+        backgroundColor: 'white',
+        borderRadius: 15,
+        padding: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 }, // Pequeno deslocamento
+        shadowOpacity: 0.1, // Opacidade bem leve
+        shadowRadius: 2, // Espalhamento pequeno
+        // Sombra no Android
+        elevation: 2,
 
     },
     statNumber: {
         fontSize: 18,
         fontWeight: 'bold',
-        fontFamily: 'Poppins-Light',
+        fontFamily: 'Poppins-Semibold',
+        color: '#F37187'
 
     },
     statLabel: {
@@ -142,18 +160,22 @@ const styles = StyleSheet.create({
 
     },
     buttonContainer: {
-        marginTop: 24,
+        marginVertical: 2,
+        marginBottom:8,
         alignItems: 'center',
+
     },
     creditButton: {
         backgroundColor: '#6366f1',
         paddingHorizontal: 24,
         paddingVertical: 8,
-        borderRadius: 9999,
+        borderRadius: 15,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
+        flexDirection:'row',
+        justifyContent:'center'
     },
     buttonText: {
         color: '#ffffff',

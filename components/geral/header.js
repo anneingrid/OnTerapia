@@ -10,10 +10,10 @@ export default function Header({ corFundo, href }) {
             <View style={styles.container}>
                 <View style={{flex:1}}>
                     <Link href={href} style={styles.backButton}>
-                        <Ionicons name="chevron-back-outline" size={24} color="white" />
+                        <Ionicons name="chevron-back-circle-outline" size={24} color="white" />
                     </Link>
                 </View>
-                <View style={{flex:20, justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:12, justifyContent:'center', alignItems:'center'}}>
                     <Image source={logoOnTerapia} style={styles.imagem} />
                 </View>
 
@@ -25,7 +25,8 @@ export default function Header({ corFundo, href }) {
 const styles = StyleSheet.create({
     capa: {
         width: '100%',
-        height: 100, // Aumentei um pouco a altura para garantir melhor alinhamento vertical
+        height: 120,
+        // Aumentei um pouco a altura para garantir melhor alinhamento vertical
         justifyContent: 'center',
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
@@ -48,10 +49,11 @@ const styles = StyleSheet.create({
     backButton: {
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: 20 
     },
     imagem: {
         width: 35,
         height: 35,
-        marginTop: 10, // Ajusta o marginTop para alinhar verticalmente a logo
+        marginTop: 20, // Ajusta o marginTop para alinhar verticalmente a logo
     },
 });

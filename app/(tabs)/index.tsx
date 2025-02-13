@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginBottom: 5,
     width: "100%",
+    fontFamily:'Poppins-Light'
   },
   inputContainer: {
     flexDirection: "row",
@@ -184,11 +185,15 @@ const styles = StyleSheet.create({
     color: "#e63946",
     fontSize: 12,
     marginVertical: 15,
+    fontFamily:'Poppins-Light'
+
   },
   loginButton: {
     backgroundColor: "#F37187",
     paddingVertical: 12,
     borderRadius: 20,
+    fontFamily:'Poppins-Light'
+,
     width: "100%",
     alignItems: "center",
   },
@@ -196,10 +201,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    fontFamily:'Poppins-Light'
+
   },
   orText: {
     color: "#e63946",
     marginVertical: 15,
+    fontFamily:'Poppins-Light'
+
   },
   googleButton: {
     flexDirection: "row",
@@ -213,6 +222,8 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     marginBottom: 15,
+    fontFamily:'Poppins-Light'
+
   },
   googleLogo: {
     width: 20,
@@ -220,12 +231,16 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   googleText: {
-    fontSize: 16,
+    fontSize: 15,
+    fontFamily:'Poppins-Light'
+    ,
     color: "#333",
   },
   registerText: {
     color: "#333",
-    fontSize: 14,
+    fontSize: 13,
+    fontFamily:'Poppins-Light'
+
   },
   registerLink: {
     color: "#F37187",

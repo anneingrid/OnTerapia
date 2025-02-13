@@ -9,6 +9,9 @@ import { useAppContext } from '@/components/provider';
 import CardProximaSessao from "@/components/paciente/cardProximaSessao";
 import FraseMotivacional from '../../../components/psicologo/frases';
 import ChecklistModal from '../../../components/psicologo/modal';
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import fotoCli from "@/assets/images/perfilMulher.png"
 
 export default function HomePsicologo() {
     const { usuarioAtual, buscaUsuarioId, sessao_mais_proxima } = useAppContext();
@@ -20,6 +23,7 @@ export default function HomePsicologo() {
         { id: '1', title: 'Declaração Ana', completed: true },
         { id: '2', title: 'Cadastrar Horários', completed: false }
     ]);
+    const hoje = new Date();
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -73,39 +77,44 @@ export default function HomePsicologo() {
                         <Image source={logoOnTerapia} style={styles.imagem} />
                     </View>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center' }}>
-
-                    <View style={[styles.rowCapa]}>
-                        <Link href='psicologo/perfilPsicologo'>
-                            <Ionicons name="person-outline"
-                                size={30}
-                                color={'white'} />
-                        </Link>
-
-                    </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={styles.rowCapa}>
-                        <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Poppins-Light' }}> Olá, <Text style={{ textDecoration: 'bold' }}>{user.data.nome.split(' ')[0]}</Text >!
+                        <Text style={{ color: 'white', fontSize: 18, fontFamily: 'Poppins-Light' }}> Olá, <Text style={{ fontFamily: 'Poppins-Bold' }}>{user.data.nome.split(' ')[0]}</Text >!
                         </Text>
 
                     </View>
                     <View style={[styles.rowCapa]}>
                         <Link href={"psicologo/notificacaoPsicologo"}>
                             <View style={styles.notificacao}>
-                            <Badge style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Light', backgroundColor:'#477bde' }}>2</Badge>
+                                <Badge style={{ color: 'white', fontSize: 12, fontFamily: 'Poppins-Light', backgroundColor: '#477bde' }}>2</Badge>
                                 <Ionicons name="notifications-outline"
                                     size={25}
                                     color={'white'} />
-                                
+
                             </View>
                         </Link>
 
                     </View>
+
                 </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 8, marginBottom: 8, }}>
+                    <Ionicons name="calendar-clear-outline"
+                        size={14}
+                        color={'white'} style={{ marginRight: 5 }} />
+                    <Text style={{ fontFamily: 'Poppins-Light', color: 'white', fontSize: 12, alignItems: 'center' }}>
+
+                        {format(hoje, "EE, dd 'de' MMMM", { locale: ptBR })}
+                    </Text>
+                    {/* <Text style={{fontFamily:'Poppins-Regular', color:'white', marginLeft:8}}>
+                        Seja a mudança que você quer ver no mundo
+                    </Text> */}
+                </View>
+
             </View>
-            <ScrollView style={{ marginTop: 15 }} horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView style={{ marginTop: 15, paddingHorizontal: 10 }} horizontal showsHorizontalScrollIndicator={false}>
 
                 <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <View style={{ flex: 1, flexDirection: 'column', marginHorizontal:2, width: 'auto', height: 'auto' }}>
+                    <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 2, width: 'auto', height: 'auto' }}>
                         <Link href='psicologo/pacientes'>
                             <Card style={styles.cardVerd}>
                                 <Card.Content >
@@ -196,7 +205,7 @@ export default function HomePsicologo() {
                     )}
                 />
             </View>
-            <View style={{ margin: 10 }}>
+            {/* <View style={{ margin: 10 }}>
                 {sessaoProxima ? (
                     <Link href={`psicologo/${sessaoProxima.idSessao}`} style={styles.cardSessão}>
                         <CardProximaSessao
@@ -213,10 +222,43 @@ export default function HomePsicologo() {
                         </Text>
                     </View>
                 )}
+            </View> */}
+            <View style={styles.cardSessão}>
+    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {/* Foto do paciente */}
+        <Image source={fotoCli} style={{ height: 80, width: 80, borderRadius: 50, marginRight: 10 }} />
+
+        {/* Informações da sessão */}
+        <View style={{ flex: 1 }}>
+            <View style={{ marginBottom: 3 }}>
+                <Text style={{ fontFamily: 'Poppins-Medium', color: 'white', fontSize: 18 }}>Próxima sessão</Text>
             </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
+                <Ionicons name="person-outline" size={20} color={'#F37187'} 
+                    style={{ backgroundColor: 'white', borderRadius: 5, padding: 1 }} />
+                <Text style={styles.textoCardSessao} numberOfLines={1}>Paciente</Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 3 }}>
+                <Ionicons name="calendar-outline" size={20} color={'#F37187'} 
+                    style={{ backgroundColor: 'white', borderRadius: 5, padding: 1 }} />
+                <Text style={styles.textoCardSessao}>
+                    {format(hoje, "dd 'de' MMMM", { locale: ptBR })}
+                </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="alarm-outline" size={20} color={'#F37187'} 
+                    style={{ backgroundColor: 'white', borderRadius: 5, padding: 1 }} />
+                <Text style={styles.textoCardSessao}>15:00</Text>
+            </View>
+        </View>
+
+        {/* Ícone de avançar */}
+        <Ionicons name="chevron-forward-outline" size={20} color={'white'} />
+    </View>
+</View>
 
             <View>
-                <FraseMotivacional></FraseMotivacional>
+                {/* <FraseMotivacional></FraseMotivacional> */}
                 <ChecklistModal
                     visible={modalVisible}
                     onDismiss={() => setModalVisible(false)}
@@ -242,7 +284,7 @@ const styles = StyleSheet.create({
     },
     capa: {
         width: "100%",
-        height: 150,
+        height: 180,
         backgroundColor: "#F37187",
         borderBottomLeftRadius: 27,
         borderBottomRightRadius: 27,
@@ -254,13 +296,13 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5, // Esta propriedade é para Android
-
+        paddingHorizontal: 15
 
     },
     imagem: {
         width: 30,
         height: 30,
-        marginTop: 50
+        marginTop: 55
     },
     rowCapa: {
         flexDirection: 'collum',
@@ -277,8 +319,8 @@ const styles = StyleSheet.create({
     },
     cardVerd: {
         backgroundColor: "white",
-        width: 120,
-        height: 120,
+        width: 130,
+        height: 130,
         margin: 5,
 
     },
@@ -295,7 +337,7 @@ const styles = StyleSheet.create({
         marginTop: 6
     },
     cardSessão: {
-        backgroundColor: '#F43F5E',
+        backgroundColor: '#F37187',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -305,10 +347,11 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         justifyContent: 'center',
-        padding: 6,
+        padding: 20,
         borderRadius: 17,
-        margin: 6
+        margin: 6,
     },
+
     textoCardSessao: {
         fontFamily: 'Poppins-Light',
         color: 'white',
@@ -326,29 +369,28 @@ const styles = StyleSheet.create({
     },
 
     checklistTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold', marginBottom: 10, color: '#F37187', fontFamily: 'Poppins-Light',
     },
     checklistItem: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: "space-between",
-        padding: 5,
+        padding: 8,
         backgroundColor: 'white',
         marginVertical: 2,
         borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 2,
+        shadowOffset: { width: 0, height: 1 }, // Pequeno deslocamento
+        shadowOpacity: 0.1, // Opacidade bem leve
+        shadowRadius: 2, // Espalhamento pequeno
+        // Sombra no Android
+        elevation: 2,
+
     },
     checklistText: {
         fontSize: 16,
         fontFamily: 'Poppins-Light',
 
     },
-    cardSessão: { backgroundColor: '#F43F5E', padding: 6, borderRadius: 17, margin: 6 }
 })
